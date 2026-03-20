@@ -11,6 +11,19 @@ Session data and cache are stored under `.wwebjs_auth` and `.wwebjs_cache` in th
 
 ## Install
 
+### Homebrew (macOS / Linux)
+
+Uses [Homebrew](https://brew.sh/) so `wa-tui` is on your PATH like any other CLI. This repository is a [tap](https://docs.brew.sh/Taps): it contains [`Formula/wa-tui.rb`](Formula/wa-tui.rb), which installs the published npm tarball and pulls in **Node** as a dependency.
+
+```bash
+brew tap gtchakama/wa-tui
+brew install wa-tui
+```
+
+Upgrade later with `brew upgrade wa-tui`. You still need **Chrome** or **Chromium** locally (see Requirements).
+
+### npm
+
 ```bash
 npm install -g @gtchakama/wa-tui
 ```
@@ -34,7 +47,41 @@ npm start
 wa-tui
 ```
 
-On first run, scan the QR code shown in the terminal with WhatsApp on your phone (**Linked devices**).
+Run the command from whatever directory you want to use for WhatsApp session files (`.wwebjs_auth`, `.wwebjs_cache` are created in the **current working directory**). Per-user settings live under `~/.wa-tui/`.
+
+### First run (QR)
+
+1. Start `wa-tui` and wait for the QR block to appear in the terminal.
+2. On your phone open **WhatsApp → Settings → Linked devices → Link a device** and scan the code.
+3. After login, the **chat list** loads. The **footer** at the bottom shows shortcuts for the screen you’re on.
+
+### Chat list
+
+- **Move** through chats with **↑↓** (or **j / k**).
+- **Enter** opens the highlighted chat.
+- **Mouse**: you can click a row if your terminal supports it.
+- **1** All chats · **2** Direct messages only · **3** Groups only.
+- **U** Toggle **unread-only** list.
+- **O** Cycle sort: **recent** → **unread first** → **A–Z**.
+- **N** / **P** Next / previous **page** of chats (see header `P1`, `P2`, …).
+- **R** Reload the chat list.
+- **F2** Open **colour settings** (palette applies after **Enter**; **Esc** / **F2** closes).
+- **Ctrl+L** **Log out** (ends the session and exits).
+- **Q** or **Ctrl+C** **Quit** without logging out (session may remain linked).
+
+### Inside a conversation
+
+- Focus is on the **message box** at the bottom. Type text and press **Enter** to **send**.
+- **Esc** If you’re quoting a message, clears the quote; if not, **returns to the chat list** (draft for that chat is kept).
+- **B** **Back** to the chat list (same as Esc when not quoting).
+- **Ctrl+↑** / **Ctrl+↓** Move the **quote/reply** target to a **newer or older** message (▶ marks the selected line). Then send as usual to reply quoting that message.
+- **Ctrl+D** **Download** media from the quoted message if it has an attachment; otherwise tries the latest message with media. Saved under **`~/Downloads/wa-tui/`** (path is echoed in the log).
+- Scroll the transcript with the mouse wheel or your terminal’s scroll keys if supported (**PgUp** / **PgDn** often work on focused log widgets).
+
+### Colour settings (F2)
+
+- Choose a palette and press **Enter** to apply. Settings are written to **`~/.wa-tui/settings.json`**.
+- **Esc** or **F2** closes settings. **Q** still quits the app.
 
 ### Environment variables
 
@@ -52,6 +99,17 @@ Incoming messages play a short sound when you are **not** viewing that chat. Def
 | ------- | ----------- |
 | `npm start` | Run the TUI |
 | `npm run start:resize` | Run with `WA_TUI_RESIZE=1` |
+
+## Maintainers: bump the Homebrew formula
+
+After publishing a new version to npm, update **`url`**, **`sha256`**, and the version segment in the tarball path inside [`Formula/wa-tui.rb`](Formula/wa-tui.rb) to match `package.json`. Get `sha256`:
+
+```bash
+V=$(npm view @gtchakama/wa-tui version)
+curl -sL "https://registry.npmjs.org/@gtchakama/wa-tui/-/wa-tui-${V}.tgz" | shasum -a 256
+```
+
+Commit the formula change on the default branch so `brew upgrade` sees it.
 
 ## Disclaimer
 
