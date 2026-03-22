@@ -693,8 +693,8 @@ function createFooter() {
   updateFooter();
 }
 
-const _isMac = process.platform === 'darwin';
-const _mod = _isMac ? 'Cmd' : 'Ctrl';
+// Terminal apps on macOS use Ctrl for shortcuts (Cmd is intercepted by the terminal itself)
+const _mod = 'Ctrl';
 
 function updateFooter() {
   if (!layout.footer) return;
@@ -707,12 +707,12 @@ function updateFooter() {
       ' [Enter]: apply palette · [Esc]/[F2]: back · Saved: ~/.wa-tui/settings.json · [Q]: Quit';
   } else if (state.screen === 'chatDetail') {
     line =
-      ` [Esc]: clr quote / back · [B]: Back · [${_mod}+K]: Search · [Ctrl+↑↓]: Quote · [Ctrl+D]: DL · [F2]: Colours · [Ctrl+L]: Logout · [Q]: Quit`;
+      ` [Esc]: clr quote / back · [B]: Back · [${_mod}+K]: Search · [${_mod}+↑↓]: Quote · [${_mod}+D]: DL · [F2]: Colours · [${_mod}+L]: Logout · [Q]: Quit`;
   } else if (state.screen === 'chats') {
     line =
-      ` [Q]: Quit · [${_mod}+K]: Search · [F2]: Colours · [Ctrl+L]: Logout · [R]efresh · [U]nread · [N]/[P] · [1-3] filter · [O] sort`;
+      ` [Q]: Quit · [${_mod}+K] or [/]: Search · [F2]: Colours · [${_mod}+L]: Logout · [R]efresh · [U]nread · [N]/[P] · [1-3] filter · [O] sort`;
   } else {
-    line = ' [Q]: Quit · [Ctrl+L]: Logout';
+    line = ` [Q]: Quit · [${_mod}+L]: Logout`;
   }
   layout.footer.setContent(line);
 }
@@ -1360,7 +1360,7 @@ function renderChatDetailMeta() {
     `{bold}actions{/bold}`,
     'Esc clear quote / back',
     'B back to chats',
-    `${_mod}+K search`,
+    'Ctrl+K search',
     'Ctrl+up/down move quote',
     'Ctrl+D download media',
     '',
@@ -2511,12 +2511,18 @@ screen.key(['C-l'], () => {
   void performLogout();
 });
 
-screen.key(['C-k', 'M-k'], () => {
+screen.key(['C-k'], () => {
   if (state.screen !== 'chats' && state.screen !== 'chatDetail' && !state.searchOpen) return;
   if (state.searchOpen) {
     closeSearch();
     return;
   }
+  openSearch();
+});
+
+screen.key(['/'], () => {
+  if (state.searchOpen) return;
+  if (state.screen !== 'chats') return;
   openSearch();
 });
 
