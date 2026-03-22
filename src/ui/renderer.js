@@ -232,14 +232,9 @@ function bootLoaderFrame(n) {
     const right = gap - left;
     return `${' '.repeat(left)}${text}${' '.repeat(right)}`;
   };
-  const boxTop = `{#${A}-fg}    ╭${'─'.repeat(innerWidth)}╮{/}`;
-  const boxBody = logoLines
-    .map(
-      (line) =>
-        `{#${A}-fg}    │{/}{#${L}-fg}${center(line)}{/}{#${A}-fg}│{/}`
-    )
+  const logoBody = logoLines
+    .map((line) => `{#${L}-fg}${center(line)}{/}`)
     .join('\n');
-  const boxBottom = `{#${A}-fg}    ╰${'─'.repeat(innerWidth)}╯{/}`;
   const byline = `{#${D}-fg}${center('by gtchakama')}{/}`;
 
   // Phase info
@@ -277,9 +272,7 @@ function bootLoaderFrame(n) {
   }).join(' ');
 
   return (
-    `${boxTop}\n` +
-    `${boxBody}\n` +
-    `${boxBottom}\n` +
+    `${logoBody}\n` +
     `\n` +
     `${byline}\n` +
     `\n` +
